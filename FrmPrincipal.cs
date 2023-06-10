@@ -18,6 +18,9 @@ namespace starpatch
         private Thread threadProcessar;
         private Thread threadJsonPatch;
 
+        private Caminho caminho;
+
+        private readonly string Config = $@"{Environment.CurrentDirectory}\config.json";
         private bool processar = false;
         private bool jsonPatch = false;
 
@@ -32,18 +35,70 @@ namespace starpatch
         {
             dgvDados.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
             dgvDados.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.None;
+
+            caminho = new Caminho();
+
+            if (File.Exists(Config))
+            {
+                var jsoConfig = File.ReadAllText(Config);
+                caminho = Newtonsoft.Json.JsonConvert.DeserializeObject<Caminho>(jsoConfig);
+
+                if (caminho != null)
+                {
+                    try
+                    {
+                        txtPastaMod.Text = ValidaBarra(caminho.CaminhoMod);
+                        txtPastaSaida.Text = ValidaBarra(caminho.CaminhoSaida);
+                        txtPath01.Text = ValidaBarra(caminho?.CaminhoPatch[0]);
+                        txtPath02.Text = ValidaBarra(caminho?.CaminhoPatch[1]);
+                        txtPath03.Text = ValidaBarra(caminho?.CaminhoPatch[2]);
+                        txtPath04.Text = ValidaBarra(caminho?.CaminhoPatch[3]);
+                        txtPath05.Text = ValidaBarra(caminho?.CaminhoPatch[4]);
+                        txtPath06.Text = ValidaBarra(caminho?.CaminhoPatch[5]);
+                        txtPath08.Text = ValidaBarra(caminho?.CaminhoPatch[7]);
+                        txtPath09.Text = ValidaBarra(caminho?.CaminhoPatch[8]);
+                        txtPath10.Text = ValidaBarra(caminho?.CaminhoPatch[9]);
+                    }
+                    catch
+                    {
+                    }
+                }
+            }
         }
 
         #region Eventos
 
-        private void btnProcurarCaminho_Click(object sender, EventArgs e)
+        private void btnPastaMod_Click(object sender, EventArgs e)
         {
-            txtCaminhoArquivo.Text = string.Empty;
-
             FolderBrowserDialog fbd = new FolderBrowserDialog();
             fbd.ShowDialog();
 
-            txtCaminhoArquivo.Text = fbd.SelectedPath;
+            if (((System.Windows.Forms.Control)sender).Name == btnPastaMod.Name)
+                txtPastaMod.Text = fbd.SelectedPath;
+            else if (((System.Windows.Forms.Control)sender).Name == btnPastaSaida.Name)
+                txtPastaSaida.Text = fbd.SelectedPath;
+            else if (((System.Windows.Forms.Control)sender).Name == btnPath01.Name)
+                txtPath01.Text = fbd.SelectedPath;
+            else if (((System.Windows.Forms.Control)sender).Name == btnPath02.Name)
+                txtPath02.Text = fbd.SelectedPath;
+            else if (((System.Windows.Forms.Control)sender).Name == btnPath03.Name)
+                txtPath03.Text = fbd.SelectedPath;
+            else if (((System.Windows.Forms.Control)sender).Name == btnPath04.Name)
+                txtPath04.Text = fbd.SelectedPath;
+            else if (((System.Windows.Forms.Control)sender).Name == btnPath05.Name)
+                txtPath05.Text = fbd.SelectedPath;
+            else if (((System.Windows.Forms.Control)sender).Name == btnPath06.Name)
+                txtPath06.Text = fbd.SelectedPath;
+            else if (((System.Windows.Forms.Control)sender).Name == btnPath07.Name)
+                txtPath07.Text = fbd.SelectedPath;
+            else if (((System.Windows.Forms.Control)sender).Name == btnPath08.Name)
+                txtPath08.Text = fbd.SelectedPath;
+            else if (((System.Windows.Forms.Control)sender).Name == btnPath09.Name)
+                txtPath09.Text = fbd.SelectedPath;
+            else if (((System.Windows.Forms.Control)sender).Name == btnPath10.Name)
+                txtPath10.Text = fbd.SelectedPath;
+
+            GravarConfig();
         }
         private void btnCancelar_Click(object sender, EventArgs e)
         {
@@ -96,6 +151,37 @@ namespace starpatch
 
         #region Metodos
 
+        private string ValidaBarra(string texto)
+        {
+            if (string.IsNullOrEmpty(texto.Trim()))
+                return string.Empty;
+            else if (texto.Trim().EndsWith(@"\"))
+                return texto.Trim();
+            else
+                return texto.Trim() + @"\";
+        }
+        private void GravarConfig()
+        {
+            caminho = new Caminho();
+            caminho.CaminhoMod = ValidaBarra(txtPastaMod.Text);
+            caminho.CaminhoSaida = ValidaBarra(txtPastaSaida.Text);
+            caminho.CaminhoPatch = new List<string>();
+            caminho.CaminhoPatch.Add(ValidaBarra(txtPath01.Text));
+            caminho.CaminhoPatch.Add(ValidaBarra(txtPath02.Text));
+            caminho.CaminhoPatch.Add(ValidaBarra(txtPath03.Text));
+            caminho.CaminhoPatch.Add(ValidaBarra(txtPath04.Text));
+            caminho.CaminhoPatch.Add(ValidaBarra(txtPath05.Text));
+            caminho.CaminhoPatch.Add(ValidaBarra(txtPath06.Text));
+            caminho.CaminhoPatch.Add(ValidaBarra(txtPath07.Text));
+            caminho.CaminhoPatch.Add(ValidaBarra(txtPath08.Text));
+            caminho.CaminhoPatch.Add(ValidaBarra(txtPath09.Text));
+            caminho.CaminhoPatch.Add(ValidaBarra(txtPath10.Text));
+
+            //cria o novo arquivo
+            string jsonFinal = JsonConvert.SerializeObject(caminho, Formatting.Indented);
+            File.WriteAllText(Config, jsonFinal);
+        }
+
         private void AddDados(string caminho, int patch)
         {
             try
@@ -112,15 +198,25 @@ namespace starpatch
                         dados.Erro = false;
 
                         if (patch == 1)
-                            dados.Patch1 = item;
+                            dados.Patch01 = item;
                         else if (patch == 2)
-                            dados.Patch2 = item;
+                            dados.Patch02 = item;
                         else if (patch == 3)
-                            dados.Patch3 = item;
+                            dados.Patch03 = item;
                         else if (patch == 4)
-                            dados.Patch4 = item;
+                            dados.Patch04 = item;
                         else if (patch == 5)
-                            dados.Patch5 = item;
+                            dados.Patch05 = item;
+                        else if (patch == 6)
+                            dados.Patch06 = item;
+                        else if (patch == 7)
+                            dados.Patch07 = item;
+                        else if (patch == 8)
+                            dados.Patch08 = item;
+                        else if (patch == 9)
+                            dados.Patch08 = item;
+                        else if (patch == 10)
+                            dados.Patch10 = item;
 
                         dados.TotalPatch++;
 
@@ -144,12 +240,12 @@ namespace starpatch
             {
                 Log("INFO", "---------------------------------------------------------------------------");
 
-                string arquivoOriginal = txtCaminhoArquivo.Text + Sessao.CaminhoStarAlliance + nomeArquivoOriginal;
-                string arquivoComPatch = txtCaminhoArquivo.Text + @"Patch\" + Sessao.CaminhoStarAlliance + nomeArquivoOriginal;
+                string arquivoOriginal = ValidaBarra(caminho?.CaminhoPatch[0]) + nomeArquivoOriginal;
+                string arquivoComPatch = caminho.CaminhoSaida + nomeArquivoOriginal;
 
                 if (!File.Exists(arquivoOriginal))
                 {
-                    Log("ERRRO", $"ARQUIVO NÃO EXISTE -> {arquivoOriginal}");
+                    Log("ERRO", $"ARQUIVO NÃO EXISTE -> {arquivoOriginal}");
                     return false;
                 }
                 else if (!File.Exists(arquivoPatch))
@@ -222,23 +318,79 @@ namespace starpatch
                         pnlCarregando.Invoke(new Action(() => btnJsonPatch.Image = global::starpatch.Properties.Resources._32_parar));
 
                         var listaOrdenada = listaDados.OrderBy(x => x.Indice);
-                        int totalLista = listaOrdenada.Count();
+                        int totalLista = listaOrdenada.Sum(x => x.TotalPatch);
+                        int indice = 1;
 
                         foreach (var item in listaOrdenada)
                         {
-                            lblRodando.Invoke(new Action(() => lblRodando.Text = $"Executando tarefa {item.Indice} / {totalLista}"));
-                            lblRodando.Invoke(new Action(() => lblRodando.Refresh()));
+                            try
+                            {
+                                if (!string.IsNullOrEmpty(item.Patch01))
+                                {
+                                    item.Erro = AplicaJsonPatch(item.Arquivo, item.Patch01);
+                                    lblRodando.Invoke(new Action(() => lblRodando.Text = $"Executando tarefa {indice++} / {totalLista}"));
+                                    lblRodando.Invoke(new Action(() => lblRodando.Refresh()));
+                                }
+                                if (!string.IsNullOrEmpty(item.Patch02))
+                                {
+                                    item.Erro = AplicaJsonPatch(item.Arquivo, item.Patch02);
+                                    lblRodando.Invoke(new Action(() => lblRodando.Text = $"Executando tarefa {indice++} / {totalLista}"));
+                                    lblRodando.Invoke(new Action(() => lblRodando.Refresh()));
+                                }
+                                if (!string.IsNullOrEmpty(item.Patch03))
+                                {
+                                    item.Erro = AplicaJsonPatch(item.Arquivo, item.Patch03);
+                                    lblRodando.Invoke(new Action(() => lblRodando.Text = $"Executando tarefa {indice++} / {totalLista}"));
+                                    lblRodando.Invoke(new Action(() => lblRodando.Refresh()));
+                                }
+                                if (!string.IsNullOrEmpty(item.Patch04))
+                                {
+                                    item.Erro = AplicaJsonPatch(item.Arquivo, item.Patch04);
+                                    lblRodando.Invoke(new Action(() => lblRodando.Text = $"Executando tarefa {indice++} / {totalLista}"));
+                                    lblRodando.Invoke(new Action(() => lblRodando.Refresh()));
+                                }
+                                if (!string.IsNullOrEmpty(item.Patch05))
+                                {
+                                    item.Erro = AplicaJsonPatch(item.Arquivo, item.Patch05);
+                                    lblRodando.Invoke(new Action(() => lblRodando.Text = $"Executando tarefa {indice++} / {totalLista}"));
+                                    lblRodando.Invoke(new Action(() => lblRodando.Refresh()));
+                                }
+                                if (!string.IsNullOrEmpty(item.Patch06))
+                                {
+                                    item.Erro = AplicaJsonPatch(item.Arquivo, item.Patch06);
+                                    lblRodando.Invoke(new Action(() => lblRodando.Text = $"Executando tarefa {indice++} / {totalLista}"));
+                                    lblRodando.Invoke(new Action(() => lblRodando.Refresh()));
+                                }
+                                if (!string.IsNullOrEmpty(item.Patch07))
+                                {
+                                    item.Erro = AplicaJsonPatch(item.Arquivo, item.Patch07);
+                                    lblRodando.Invoke(new Action(() => lblRodando.Text = $"Executando tarefa {indice++} / {totalLista}"));
+                                    lblRodando.Invoke(new Action(() => lblRodando.Refresh()));
+                                }
+                                if (!string.IsNullOrEmpty(item.Patch08))
+                                {
+                                    item.Erro = AplicaJsonPatch(item.Arquivo, item.Patch08);
+                                    lblRodando.Invoke(new Action(() => lblRodando.Text = $"Executando tarefa {indice++} / {totalLista}"));
+                                    lblRodando.Invoke(new Action(() => lblRodando.Refresh()));
+                                }
+                                if (!string.IsNullOrEmpty(item.Patch09))
+                                {
+                                    item.Erro = AplicaJsonPatch(item.Arquivo, item.Patch09);
+                                    lblRodando.Invoke(new Action(() => lblRodando.Text = $"Executando tarefa {indice++} / {totalLista}"));
+                                    lblRodando.Invoke(new Action(() => lblRodando.Refresh()));
+                                }
+                                if (!string.IsNullOrEmpty(item.Patch10))
+                                {
+                                    item.Erro = AplicaJsonPatch(item.Arquivo, item.Patch10);
+                                    lblRodando.Invoke(new Action(() => lblRodando.Text = $"Executando tarefa {indice++} / {totalLista}"));
+                                    lblRodando.Invoke(new Action(() => lblRodando.Refresh()));
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                Log("ERRO", $"ERRO: Exception -> {ex}");
+                            }
 
-                            if (!string.IsNullOrEmpty(item.Patch1))
-                                item.Erro = AplicaJsonPatch(item.Arquivo, item.Patch1);
-                            if (!string.IsNullOrEmpty(item.Patch2))
-                                item.Erro = AplicaJsonPatch(item.Arquivo, item.Patch2);
-                            if (!string.IsNullOrEmpty(item.Patch3))
-                                item.Erro = AplicaJsonPatch(item.Arquivo, item.Patch3);
-                            if (!string.IsNullOrEmpty(item.Patch4))
-                                item.Erro = AplicaJsonPatch(item.Arquivo, item.Patch4);
-                            if (!string.IsNullOrEmpty(item.Patch5))
-                                item.Erro = AplicaJsonPatch(item.Arquivo, item.Patch5);
                         }
 
                         CarregaDados();
@@ -269,6 +421,9 @@ namespace starpatch
             double etapa = 0;
             try
             {
+                lblTotal.Invoke(new Action(() => lblTotal.Text = "Total Patch: 0"));
+                GravarConfig();
+
                 Log("INFO", "---------------------------------------------------------------------------");
                 Log("INFO", "PROCESSAR");
 
@@ -282,14 +437,14 @@ namespace starpatch
                     btnProcessar.Invoke(new Action(() => btnProcessar.Image = global::starpatch.Properties.Resources._32_parar));
                     btnJsonPatch.Invoke(new Action(() => btnJsonPatch.Enabled = false));
 
-                    if (string.IsNullOrEmpty(txtCaminhoArquivo.Text))
+                    if (string.IsNullOrEmpty(caminho.CaminhoMod))
                     {
                         Mensagem.CampoObrigatorio("Caminho Raiz Mod");
                         Log("ERRO", "Caminho Raiz Mod");
                         return;
                     }
 
-                    DirectoryInfo dirCaminhoRaiz = new DirectoryInfo(txtCaminhoArquivo.Text);
+                    DirectoryInfo dirCaminhoRaiz = new DirectoryInfo(caminho.CaminhoMod);
                     if (!dirCaminhoRaiz.Exists)
                     {
                         Mensagem.Erro("Caminho Raiz não foi localizado.");
@@ -298,37 +453,22 @@ namespace starpatch
                     }
 
                     listaDados = new List<Dados>();
+                    int caminhoPatch = 1;
 
-                    DirectoryInfo dirCaminhoStarAlliance = new DirectoryInfo(txtCaminhoArquivo.Text + Sessao.CaminhoStarAlliance);
-                    DirectoryInfo dirCaminhoComplemento = new DirectoryInfo(txtCaminhoArquivo.Text + Sessao.CaminhoComplemento);
-                    DirectoryInfo dirCaminhoShaders = new DirectoryInfo(txtCaminhoArquivo.Text + Sessao.CaminhoShaders);
-                    DirectoryInfo dirCaminhoUpdate = new DirectoryInfo(txtCaminhoArquivo.Text + Sessao.CaminhoUpdate);
-                    DirectoryInfo dirCaminhoMaple32 = new DirectoryInfo(txtCaminhoArquivo.Text + Sessao.CaminhoMaple32);
+                    foreach (string item in caminho?.CaminhoPatch)
+                    {
+                        if (!string.IsNullOrEmpty(item))
+                        {
+                            DirectoryInfo dirCaminho = new DirectoryInfo(item);
 
-
-                    if (dirCaminhoStarAlliance.Exists)
-                    {
-                        AddDados(dirCaminhoStarAlliance.FullName, 1);
-                    }
-                    if (dirCaminhoComplemento.Exists)
-                    {
-                        AddDados(dirCaminhoComplemento.FullName, 2);
-                    }
-                    if (dirCaminhoShaders.Exists)
-                    {
-                        AddDados(dirCaminhoShaders.FullName, 3);
-                    }
-                    if (dirCaminhoUpdate.Exists)
-                    {
-                        AddDados(dirCaminhoUpdate.FullName, 4);
-                    }
-                    if (dirCaminhoMaple32.Exists)
-                    {
-                        AddDados(dirCaminhoMaple32.FullName, 5);
+                            if (dirCaminho.Exists)
+                                AddDados(dirCaminho.FullName, caminhoPatch++);
+                        }
                     }
 
                     processar = false;
                     CarregaDados();
+                    lblTotal.Invoke(new Action(() => lblTotal.Text = $"Total Patch:{listaDados.Sum(x => x.TotalPatch)}"));
                     Mensagem.Informacao("FIM");
                 }
 

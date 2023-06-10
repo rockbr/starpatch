@@ -32,6 +32,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>icone.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.AspNetCore.JsonPatch, Version=7.0.5.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
       <HintPath>packages\Microsoft.AspNetCore.JsonPatch.7.0.5\lib\net462\Microsoft.AspNetCore.JsonPatch.dll</HintPath>
@@ -52,11 +55,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Classes\Caminho.cs" />
     <Compile Include="Classes\Dados.cs" />
     <Compile Include="Classes\LogArquivo.cs" />
     <Compile Include="Classes\Mensagem.cs" />
     <Compile Include="Classes\PropertyComparer.cs" />
-    <Compile Include="Classes\Sessao.cs" />
     <Compile Include="Classes\SortableBindingList.cs" />
     <Compile Include="FrmPrincipal.cs">
       <SubType>Form</SubType>
@@ -95,11 +98,14 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
+    <Content Include="icone.ico" />
     <Content Include="Resources\16_buscar_pastas.png" />
     <Content Include="Resources\32-fechar.png" />
     <Content Include="Resources\32-fogete.png" />
     <Content Include="Resources\32-json.png" />
     <Content Include="Resources\32-parar.png" />
+    <Content Include="Resources\icone.ico" />
+    <Content Include="Resources\star.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
